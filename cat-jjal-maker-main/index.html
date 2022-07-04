@@ -32,28 +32,66 @@
 	<body>
 		<div id="app"></div>
 		<script type="text/babel">
-			const catItem = (
-				<li>
-					<img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
-				</li>
-			);
+			// 컴포넌트는 무조건 대문자로 시작한다.
+			// 1. 함수를 만들어보자
+			// 3. img만 넣으니까 변경이안됨 왜냐면 img링크는 보냈지만 CatItem이 받지 못하기 때문 > 인자값 img 작성
+			function CatItem(props) {
+				// 4. props를 콘솔로 보면 인자값이 오브젝트로 들어온다.(props라는 key값의 Img 이런식으로)
+				// console.log(props);
+				// 5. JSX 안에 변수를 넣어야하기 때문에 중괄호로 감싸줘야한다. {props}
+				return (
+					<li>
+						<img src={props.img} title={props.title} />
+					</li>
+				);
+			}
 
-			const favorites = (
-				<ul class="favorites">
-					{catItem}
-					{catItem}
-					{catItem}
-				</ul>
-			);
+			// 2. 위에서 만들어준 컴포넌트로 변경해보자
+			// const favorites = (
+			// 	<ul class="favorites">
+			// 		<CatItem img="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
+			// 		<CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn" />
+			// 		<CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript" />
+			// 	</ul>
+			// );
+			// 6. favorites 컴포넌트로 만들기
+			function Favorites() {
+				return (
+					<ul class="favorites">
+						<CatItem img="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
+						<CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn" />
+						<CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript" />
+					</ul>
+				);
+			}
 
-			const mainCard = (
-				<div class="main-card">
-					<img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" alt="고양이" width="400" />
-					<button>🤍</button>
-				</div>
-			);
+			// 7. mainCard 컴포넌트로 만들기
+			// const mainCard = (
+			// 	<div class="main-card">
+			// 		<img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" alt="고양이" width="400" />
+			// 		<button>🤍</button>
+			// 	</div>
+			// );
 
-			const title = <h1>1번째 고양이 가라사대</h1>;
+			// 8. 화살표 함수로 작성해보자
+			const MainCard = () => {
+				return (
+					<div class="main-card">
+						<img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" alt="고양이" width="400" />
+						<button>🤍</button>
+					</div>
+				);
+			};
+
+			// 9. title을 화살표 함수를 이용해서 컴포넌트로 만들자
+			// const title = <h1>1번째 고양이 가라사대</h1>;
+			const Title = (props) => {
+				// console.log(props);
+				// tag 안에 작성한 props는 children으로 넘어온다.
+				// 10. h태그를 사용하는 것 처럼 만들어보자
+				return <h1>{props.children}</h1>;
+			};
+
 			const catForm = (
 				<form>
 					<input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
@@ -61,36 +99,12 @@
 				</form>
 			);
 
-			/* 예시 */
-			// 1. 함수를 사용할때
-			function sayHello(name) {
-				return "안녕 " + "name";
-			}
-			sayHello("산아"); // 안녕 산아
-
-			function Card(title, description) {
-				return (
-					<div>
-						<h2>{title}</h2>
-						{description}
-					</div>
-				);
-			}
-
-			Card("리액트 짱", "리액트 입니다.");
-			Card("리액트 싫어요", "리액트입니다. 2");
-
-			// 2. 이걸 리액트로 만든다면
-			<Card title="리액트 짱" description="리액트 입니다." />
-			<Card title="리액트 싫어요" description="리액트 입니다. 2" />
-			/*  */
-
 			const app = (
 				<div>
-					{title}
+					<Title>1번째 고양이 가라사대</Title>
 					{catForm}
-					{mainCard}
-					{favorites}
+					<MainCard />
+					<Favorites />
 				</div>
 			);
 
