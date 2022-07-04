@@ -61,6 +61,30 @@
 				</form>
 			);
 
+			/* 예시 */
+			// 1. 함수를 사용할때
+			function sayHello(name) {
+				return "안녕 " + "name";
+			}
+			sayHello("산아"); // 안녕 산아
+
+			function Card(title, description) {
+				return (
+					<div>
+						<h2>{title}</h2>
+						{description}
+					</div>
+				);
+			}
+
+			Card("리액트 짱", "리액트 입니다.");
+			Card("리액트 싫어요", "리액트입니다. 2");
+
+			// 2. 이걸 리액트로 만든다면
+			<Card title="리액트 짱" description="리액트 입니다." />
+			<Card title="리액트 싫어요" description="리액트 입니다. 2" />
+			/*  */
+
 			const app = (
 				<div>
 					{title}
