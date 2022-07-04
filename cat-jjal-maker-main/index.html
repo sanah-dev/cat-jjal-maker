@@ -25,24 +25,28 @@
 			flex-wrap: wrap;
 			gap: 15px;
 		}
-		.favorites img {
-			width: 150px;
-		}
 	</style>
 	<body>
 		<div id="app"></div>
 		<script type="text/babel">
+			/*
+				리액트에서 스타일링하기
+				1. 리액트 문법에서는 class를 사용하지않고 className으로 사용한다.
+				2. 리액트에서 스타일링할 때 style이라는 props을 그대로 넘긴다.
+			*/
+
+			// 3. 위에 css에 적혀있는 부분을 props로 넘겨줘보자
 			function CatItem(props) {
 				return (
 					<li>
-						<img src={props.img} title={props.title} />
+						<img src={props.img} title={props.title} style={{ width: "150px" }} />
 					</li>
 				);
 			}
 
 			function Favorites() {
 				return (
-					<ul class="favorites">
+					<ul className="favorites">
 						<CatItem img="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
 						<CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn" />
 						<CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript" />
@@ -50,10 +54,9 @@
 				);
 			}
 
-			// ES6+ 디스트럭처링 문법 적용
 			const MainCard = ({ src }) => {
 				return (
-					<div class="main-card">
+					<div className="main-card">
 						<img src={src} />
 						<button>🤍</button>
 					</div>
