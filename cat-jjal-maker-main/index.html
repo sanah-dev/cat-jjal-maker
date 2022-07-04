@@ -32,13 +32,7 @@
 	<body>
 		<div id="app"></div>
 		<script type="text/babel">
-			// 컴포넌트는 무조건 대문자로 시작한다.
-			// 1. 함수를 만들어보자
-			// 3. img만 넣으니까 변경이안됨 왜냐면 img링크는 보냈지만 CatItem이 받지 못하기 때문 > 인자값 img 작성
 			function CatItem(props) {
-				// 4. props를 콘솔로 보면 인자값이 오브젝트로 들어온다.(props라는 key값의 Img 이런식으로)
-				// console.log(props);
-				// 5. JSX 안에 변수를 넣어야하기 때문에 중괄호로 감싸줘야한다. {props}
 				return (
 					<li>
 						<img src={props.img} title={props.title} />
@@ -46,15 +40,6 @@
 				);
 			}
 
-			// 2. 위에서 만들어준 컴포넌트로 변경해보자
-			// const favorites = (
-			// 	<ul class="favorites">
-			// 		<CatItem img="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
-			// 		<CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn" />
-			// 		<CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript" />
-			// 	</ul>
-			// );
-			// 6. favorites 컴포넌트로 만들기
 			function Favorites() {
 				return (
 					<ul class="favorites">
@@ -65,45 +50,42 @@
 				);
 			}
 
-			// 7. mainCard 컴포넌트로 만들기
-			// const mainCard = (
-			// 	<div class="main-card">
-			// 		<img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" alt="고양이" width="400" />
-			// 		<button>🤍</button>
-			// 	</div>
-			// );
-
-			// 8. 화살표 함수로 작성해보자
-			const MainCard = () => {
+			// 2번
+			const MainCard = (props) => {
+				console.log(props);
 				return (
 					<div class="main-card">
-						<img src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" alt="고양이" width="400" />
+						<img src={props.src} alt={props.alt} width={props.width} />
 						<button>🤍</button>
 					</div>
 				);
 			};
 
-			// 9. title을 화살표 함수를 이용해서 컴포넌트로 만들자
-			// const title = <h1>1번째 고양이 가라사대</h1>;
 			const Title = (props) => {
-				// console.log(props);
-				// tag 안에 작성한 props는 children으로 넘어온다.
-				// 10. h태그를 사용하는 것 처럼 만들어보자
 				return <h1>{props.children}</h1>;
 			};
 
-			const catForm = (
-				<form>
-					<input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
-					<button type="submit">생성</button>
-				</form>
-			);
+			// 1번
+			const Form = () => {
+				return (
+					<form>
+						<input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
+						<button type="submit">생성</button>
+					</form>
+				);
+			};
+
+			/*
+				퀴즈
+				1. form 엘리먼트를 컴포넌트로 변경
+				2. MainCard 컴포넌트 재사용을 위해 img를 props로 받아서 보여주기
+			*/
 
 			const app = (
 				<div>
 					<Title>1번째 고양이 가라사대</Title>
-					{catForm}
-					<MainCard />
+					<Form />
+					<MainCard src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" alt="고양이" width="400" />
 					<Favorites />
 				</div>
 			);
