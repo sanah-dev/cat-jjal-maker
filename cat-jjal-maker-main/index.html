@@ -50,12 +50,11 @@
 				);
 			}
 
-			// 2번
-			const MainCard = (props) => {
-				console.log(props);
+			// ES6+ 디스트럭처링 문법 적용
+			const MainCard = ({ src }) => {
 				return (
 					<div class="main-card">
-						<img src={props.src} alt={props.alt} width={props.width} />
+						<img src={src} />
 						<button>🤍</button>
 					</div>
 				);
@@ -65,7 +64,6 @@
 				return <h1>{props.children}</h1>;
 			};
 
-			// 1번
 			const Form = () => {
 				return (
 					<form>
@@ -75,17 +73,11 @@
 				);
 			};
 
-			/*
-				퀴즈
-				1. form 엘리먼트를 컴포넌트로 변경
-				2. MainCard 컴포넌트 재사용을 위해 img를 props로 받아서 보여주기
-			*/
-
 			const app = (
 				<div>
 					<Title>1번째 고양이 가라사대</Title>
 					<Form />
-					<MainCard src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" alt="고양이" width="400" />
+					<MainCard src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
 					<Favorites />
 				</div>
 			);
