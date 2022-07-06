@@ -47,23 +47,15 @@
 				);
 			}
 
-			/*
-				1. 메인카드의 버튼을 눌렀을때 어떻게 되야하는지 
-				
-			*/
-
 			const MainCard = ({ src }) => {
-				// 2. 눌렀을때 불려질 이벤트를 작성해보자
 				function handleHeartClick() {
 					console.log("하트 눌렀음");
 				}
 
-				// 4. 또 다른 이벤트를 추가해보자
 				function handleHeartMouseOver() {
 					console.log("하트 스쳐지나감");
 				}
 
-				// 3. 클릭 이벤트 호출해보자
 				return (
 					<div className="main-card">
 						<img src={src} />
@@ -78,16 +70,31 @@
 				return <h1>{props.children}</h1>;
 			};
 
-			// 5. 폼이 전송되는 것을 알기 위해서 submit 이벤트를 작성해본다.
+			// 2. 폼이 전송될 때 마다 카운터를 하나씩 올려야하기 때문에 form안에 작성한다.
 			const Form = () => {
-				// 6. 이벤트 작성
-				function handleFormSubmit() {
-					// 8. 페이지 새로고침 없이 폼만 전송한다.
+				/*
+				// 3. 폼 전송됨이 눌릴때마다 1씩 증가한다
+				const counterState = React.useState(1);
+				// 4. 카운터는 카운터스테이트의 0번쨰인자고 (카운터 그자체)
+				const counter = counterState[0];
+				// 5. 셋카운터는 카운터의 1번째 인자이다. (카운터를 조작하는 함수)
+				const setCounter = counterState[1];
+				*/
+
+				// 7. 매번 0번째 1번째 쓰지않는 JS문법으로 변경해보자
+				// 0번째 인자 counter, 1번째인자 setCounter
+				const [counter, setCounter] = React.useState(1);
+
+				console.log(counter);
+
+				function handleFormSubmit(event) {
 					event.preventDefault();
 					console.log("야옹");
+
+					// 6. 카운터 값에 1을 더해라
+					setCounter(counter + 1);
 				}
 
-				// 7. onsubmit 작성 후 1초정도 보여지고 새로고침 되면서 사라지는걸 볼 수 있다.
 				return (
 					<form onSubmit={handleFormSubmit}>
 						<input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
@@ -95,6 +102,10 @@
 					</form>
 				);
 			};
+
+			// 내 마음대로 값을 변경하고싶을때 상태변경을 한다.
+			// 상태를 변경할때는 useState를 사용한다.
+			// 1. title의 1번째 고양이 가라사대를 N번째로 변경해보자
 
 			const app = (
 				<div>
