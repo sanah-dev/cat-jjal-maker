@@ -70,32 +70,7 @@
 				return <h1>{props.children}</h1>;
 			};
 
-			// 1. 카운터 상태를 폼에 넣기
-			// 카운터 상태를 쓰고 싶은 공간이 app 속 Title과 Form이기 때문에 자식속에 있는 counter를 부모인 app으로 옮겨야한다.
-			// 지금은 app이 앨리먼트로 되어있기 때문에 컴포넌트로 변경해야한다.
-
-			// 8. handleFormSubmit 을 props로 넘겨준다.
 			const Form = ({ handleFormSubmit }) => {
-				// 3. 부모 컴포넌트 App을 만들었으니 카운터를 옮긴다.
-				// const [counter, setCounter] = React.useState(1);
-				// console.log(counter);
-
-				/* 
-					6. 
-					handleFormSubmit 생성을 눌렀을때 setCounter 하나씩 올려라 라고 하는데 form안에는 counter가 없기때문에 올릴 수 없다 
-					그럼 어떻게?
-					 props를 넘겨주면 된다.
-
-					하지만 여기서 handleFormSubmit 함수 자체, 즉 form에서 작성된 함수를 App으로 옮겨보자
-
-					function handleFormSubmit(event) {
-						event.preventDefault();
-						console.log("야옹");
-						
-						setCounter(counter + 1);
-					}
-				*/
-
 				return (
 					<form onSubmit={handleFormSubmit}>
 						<input type="text" name="name" placeholder="영어 대사를 입력해주세요" />
@@ -104,34 +79,29 @@
 				);
 			};
 
-			// 2. 앨리먼트로 만들어진 app을 컴포넌트로 만들어보자
-			// const app = (
-			// 	<div>
-			// 		<Title>1번째 고양이 가라사대</Title>
-			// 		<Form />
-			// 		<MainCard src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
-			// 		<Favorites />
-			// 	</div>
-			// );
-
 			const App = () => {
-				// 4. 카운터 App에 넣기
 				const [counter, setCounter] = React.useState(1);
-				console.log(counter);
 
-				// 7. Form의 handleFormSubmit 함수 가져오기
+				// 2. url을 그대로 작성하지않고 변수로 만들어서 넣기
+				const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
+				const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
+				const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
+				// 1. 이미지 변경하는 상태 만들기
+				const [mainCat, setMainCat] = React.useState(CAT1); // useState(초기값) << 이미지 초기값을 넣어주자
+
 				function handleFormSubmit(event) {
 					event.preventDefault();
 					setCounter(counter + 1);
+					// 4. handleFormSubmit 할때 src의 상태를 CAT2로 변경한다
+					setMainCat(CAT2);
 				}
 
-				// 5. Title의 1번째를 counter로 변경한다.
-				// 9. handleFormSubmit 를 handleFormSubmit로 넘겨준다
+				// 3. src에 스테틱한 이미지가 아니고 mainCat이라는 동적인 상태를 넘겨준다
 				return (
 					<div>
 						<Title>{counter}번째 고양이 가라사대</Title>
 						<Form handleFormSubmit={handleFormSubmit} />
-						<MainCard src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
+						<MainCard src={mainCat} />
 						<Favorites />
 					</div>
 				);
@@ -139,15 +109,21 @@
 
 			const 여기다가그려 = document.querySelector("#app");
 
-			// 3. 위에서 만들 App컴포넌트를 컴포넌트를 작성하는것과 동일하게 <컴포넌트명 />로 그려준다
 			ReactDOM.render(<App />, 여기다가그려);
 		</script>
 	</body>
 </html>
 
 <!-- 
-	form컴포넌트 안에서 즉 자식컴포넌트 안에서만 쓰이던 상태를 상위 컴포넌트에서 같이 쓰고 싶을때
-	그 상태를 위로 끌어올리게 된다. 이 것을 상태 끌어 올리기(lifting state up) 라고 한다.
+	퀴즈
+	생성을 누르면 메인캣 사진을 다른 사진으로 바꾸기 (이미지를 변경)
+	
+	힌트
+	App에 counter상태만 있는데 mainCatImg 상태를 추가한다
+	메인캣 이미지를 지금은 정적으로 되어있는데 이 이미지가 상태를 바라보도록 하고, 생성을 눌렀을때 상태를 cat2로 변경한다.
 
-	즉 상태를 다른 컴포넌트에서 선언하도록 바꾸고 자식 컴포넌트에 프롭스로 넘겨준다.
- -->
+	풀이
+	생성을 눌렀을때 이미지를 바꿔라
+	1. 생성을 눌렀을때 함수 안에서 고양이 사진을 바꾼다. >> handleFormSubmit
+	2. 바꾸기 위해서 메인캣이라는 상태를 추가한다. >> 상태 만들기
+-->
