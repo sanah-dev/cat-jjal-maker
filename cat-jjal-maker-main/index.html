@@ -32,11 +32,24 @@
 			/*
 
 			이번 강의에서는
-			고양이의 리스틀 받아서 리스트를 쫘르륵 뿌려준다
+			배웠던 개념을 조합해서 기능을 추가해보자!
 
-			현재 <CatItem 가 쭈루루룩 복붙되어있기 떄문에 이부분!!
+			하트 버튼을 눌렀을때 고양이리스트에 고양이가 하나 더 추가되고, Favorites에 고양이 이미지가 하나 더 보이게 하자
+
+			이 작업을 위해서는??
+			상태를 쓰는법을 알아야하고
+			리스트에서 상태 조작하는 법을 알아야하고
+			상태 끌어올리기 개념을 알아야 한다.
+
+
+			작업순서
+				1. 하트를 눌렀을 때 >> handleHeartClick >> 함수를 상위 App으로 옮긴다
+				2. 끌어올린 함수를 prop으로 전달한다
+				3. 하트 클릭을 했을 때 리스트에 고양이 하나를 더 추가한다. >> 먼저 고양이 리스트도 동적으로 관리되어야 하기때문에 상태로 관리해야한다
+				4. 하트를 눌렀을 때 리스트에 고양이 하나를 추가 >> 초기 배열에 CAT3만 추가한다
 
 			*/
+
 			function CatItem(props) {
 				return (
 					<li>
@@ -45,48 +58,36 @@
 				);
 			}
 
-			function Favorites() {
-				// 1. 리스트를 위해서 변수에 링크를 담아서 배열을 만들어준다.
-				const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
-				const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
-				const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
+			function Favorites({ favorites }) {
+				// 6. 정적으로 생성한 고양이 리스트 제거 63줄~67줄까지
+				// const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
+				// const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
+				// const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
+				// const cats = [CAT1, CAT2, CAT3];
 
-				// 2. cats 배열을 통해서 CAT을 그려본다. 이떄 배열을 순회(개수만큼)하는 js api가 map이다.
-				// 크롬 웹에서 console창에 직접 입력해보기 복붙X >> ["고양1", "고양2", "고양3"].mat(cat => cat + "귀여워")
-				const cats = [CAT1, CAT2, CAT3];
-
-				// 3. ul안에 JS를 작성하기 때문에 {} 중괄호 안에서 작성
+				// 5. cats.map을 동적인 리스트 favorites으로 변경하기
 				return (
-					// 4. 리스트에 있는 모든 자식들은 key라는 prop이 있어야 한다는 Warning 에러가 뜸 >> key값을 추가하기
-					// <ul className="favorites">
-					// 	{cats.map((cat) => ( << map으로 만들어진 배열을 cat으로 저장하기 때문에 img={cat}로 가져오기
-					// 		<CatItem img={cats} />
-					// 	))}
-					// </ul>
-					// 5. key값 추가
 					<ul className="favorites">
-						{cats.map((cat) => (
+						{favorites.map((cat) => (
 							<CatItem img={cat} key={cat} />
 						))}
 					</ul>
 				);
 			}
 
-			const MainCard = ({ src }) => {
+			// 2. 끌어올린 handleHeartClick를 prop으로 전달한다
+			const MainCard = ({ src, handleHeartClick }) => {
+				/*
+				1. 상위인 App 컴포넌트에 상태를 끌어올린다
 				function handleHeartClick() {
 					console.log("하트 눌렀음");
 				}
-
-				function handleHeartMouseOver() {
-					console.log("하트 스쳐지나감");
-				}
+				*/
 
 				return (
 					<div className="main-card">
 						<img src={src} />
-						<button onClick={handleHeartClick} onMouseOver={handleHeartMouseOver}>
-							🤍
-						</button>
+						<button onClick={handleHeartClick}>🤍</button>
 					</div>
 				);
 			};
@@ -110,7 +111,11 @@
 				const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
 				const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
 				const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
+
 				const [mainCat, setMainCat] = React.useState(CAT1);
+
+				// 3. 고양이 리스트를 상태로 만들기
+				const [favorites, setFavorites] = React.useState([CAT1, CAT2]);
 
 				function handleFormSubmit(event) {
 					event.preventDefault();
@@ -118,12 +123,20 @@
 					setMainCat(CAT2);
 				}
 
+				function handleHeartClick() {
+					// 7. 기존에 있는 배열에 CAT3만 추가한다
+					// JS문법으로 사용해보자
+					// 기존에 있는 favorites 배열을 펼쳐서 쓴다음에 CAT3를 추가한다. 그럼 기존 favorites에 CAT3를 더해서 저장해라 >> [CAT1,CAT2,CAT3]
+					setFavorites([...favorites, CAT3]);
+				}
+
+				// 4. Favorites의 favorites 함수를 prop으로 넘겨준다.
 				return (
 					<div>
 						<Title>{counter}번째 고양이 가라사대</Title>
 						<Form handleFormSubmit={handleFormSubmit} />
-						<MainCard src={mainCat} />
-						<Favorites />
+						<MainCard src={mainCat} handleHeartClick={handleHeartClick} />
+						<Favorites favorites={favorites} />
 					</div>
 				);
 			};
