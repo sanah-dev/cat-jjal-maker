@@ -70,30 +70,31 @@
 				return <h1>{props.children}</h1>;
 			};
 
-			// 2. 폼이 전송될 때 마다 카운터를 하나씩 올려야하기 때문에 form안에 작성한다.
-			const Form = () => {
-				/*
-				// 3. 폼 전송됨이 눌릴때마다 1씩 증가한다
-				const counterState = React.useState(1);
-				// 4. 카운터는 카운터스테이트의 0번쨰인자고 (카운터 그자체)
-				const counter = counterState[0];
-				// 5. 셋카운터는 카운터의 1번째 인자이다. (카운터를 조작하는 함수)
-				const setCounter = counterState[1];
+			// 1. 카운터 상태를 폼에 넣기
+			// 카운터 상태를 쓰고 싶은 공간이 app 속 Title과 Form이기 때문에 자식속에 있는 counter를 부모인 app으로 옮겨야한다.
+			// 지금은 app이 앨리먼트로 되어있기 때문에 컴포넌트로 변경해야한다.
+
+			// 8. handleFormSubmit 을 props로 넘겨준다.
+			const Form = ({ handleFormSubmit }) => {
+				// 3. 부모 컴포넌트 App을 만들었으니 카운터를 옮긴다.
+				// const [counter, setCounter] = React.useState(1);
+				// console.log(counter);
+
+				/* 
+					6. 
+					handleFormSubmit 생성을 눌렀을때 setCounter 하나씩 올려라 라고 하는데 form안에는 counter가 없기때문에 올릴 수 없다 
+					그럼 어떻게?
+					 props를 넘겨주면 된다.
+
+					하지만 여기서 handleFormSubmit 함수 자체, 즉 form에서 작성된 함수를 App으로 옮겨보자
+
+					function handleFormSubmit(event) {
+						event.preventDefault();
+						console.log("야옹");
+						
+						setCounter(counter + 1);
+					}
 				*/
-
-				// 7. 매번 0번째 1번째 쓰지않는 JS문법으로 변경해보자
-				// 0번째 인자 counter, 1번째인자 setCounter
-				const [counter, setCounter] = React.useState(1);
-
-				console.log(counter);
-
-				function handleFormSubmit(event) {
-					event.preventDefault();
-					console.log("야옹");
-
-					// 6. 카운터 값에 1을 더해라
-					setCounter(counter + 1);
-				}
 
 				return (
 					<form onSubmit={handleFormSubmit}>
@@ -103,22 +104,50 @@
 				);
 			};
 
-			// 내 마음대로 값을 변경하고싶을때 상태변경을 한다.
-			// 상태를 변경할때는 useState를 사용한다.
-			// 1. title의 1번째 고양이 가라사대를 N번째로 변경해보자
+			// 2. 앨리먼트로 만들어진 app을 컴포넌트로 만들어보자
+			// const app = (
+			// 	<div>
+			// 		<Title>1번째 고양이 가라사대</Title>
+			// 		<Form />
+			// 		<MainCard src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
+			// 		<Favorites />
+			// 	</div>
+			// );
 
-			const app = (
-				<div>
-					<Title>1번째 고양이 가라사대</Title>
-					<Form />
-					<MainCard src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
-					<Favorites />
-				</div>
-			);
+			const App = () => {
+				// 4. 카운터 App에 넣기
+				const [counter, setCounter] = React.useState(1);
+				console.log(counter);
+
+				// 7. Form의 handleFormSubmit 함수 가져오기
+				function handleFormSubmit(event) {
+					event.preventDefault();
+					setCounter(counter + 1);
+				}
+
+				// 5. Title의 1번째를 counter로 변경한다.
+				// 9. handleFormSubmit 를 handleFormSubmit로 넘겨준다
+				return (
+					<div>
+						<Title>{counter}번째 고양이 가라사대</Title>
+						<Form handleFormSubmit={handleFormSubmit} />
+						<MainCard src="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
+						<Favorites />
+					</div>
+				);
+			};
 
 			const 여기다가그려 = document.querySelector("#app");
 
-			ReactDOM.render(app, 여기다가그려);
+			// 3. 위에서 만들 App컴포넌트를 컴포넌트를 작성하는것과 동일하게 <컴포넌트명 />로 그려준다
+			ReactDOM.render(<App />, 여기다가그려);
 		</script>
 	</body>
 </html>
+
+<!-- 
+	form컴포넌트 안에서 즉 자식컴포넌트 안에서만 쓰이던 상태를 상위 컴포넌트에서 같이 쓰고 싶을때
+	그 상태를 위로 끌어올리게 된다. 이 것을 상태 끌어 올리기(lifting state up) 라고 한다.
+
+	즉 상태를 다른 컴포넌트에서 선언하도록 바꾸고 자식 컴포넌트에 프롭스로 넘겨준다.
+ -->
