@@ -29,6 +29,14 @@
 	<body>
 		<div id="app"></div>
 		<script type="text/babel">
+			/*
+
+			이번 강의에서는
+			고양이의 리스틀 받아서 리스트를 쫘르륵 뿌려준다
+
+			현재 <CatItem 가 쭈루루룩 복붙되어있기 떄문에 이부분!!
+
+			*/
 			function CatItem(props) {
 				return (
 					<li>
@@ -38,11 +46,28 @@
 			}
 
 			function Favorites() {
+				// 1. 리스트를 위해서 변수에 링크를 담아서 배열을 만들어준다.
+				const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
+				const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
+				const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
+
+				// 2. cats 배열을 통해서 CAT을 그려본다. 이떄 배열을 순회(개수만큼)하는 js api가 map이다.
+				// 크롬 웹에서 console창에 직접 입력해보기 복붙X >> ["고양1", "고양2", "고양3"].mat(cat => cat + "귀여워")
+				const cats = [CAT1, CAT2, CAT3];
+
+				// 3. ul안에 JS를 작성하기 때문에 {} 중괄호 안에서 작성
 				return (
+					// 4. 리스트에 있는 모든 자식들은 key라는 prop이 있어야 한다는 Warning 에러가 뜸 >> key값을 추가하기
+					// <ul className="favorites">
+					// 	{cats.map((cat) => ( << map으로 만들어진 배열을 cat으로 저장하기 때문에 img={cat}로 가져오기
+					// 		<CatItem img={cats} />
+					// 	))}
+					// </ul>
+					// 5. key값 추가
 					<ul className="favorites">
-						<CatItem img="https://cataas.com/cat/60b73094e04e18001194a309/says/react" />
-						<CatItem img="https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn" />
-						<CatItem img="https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript" />
+						{cats.map((cat) => (
+							<CatItem img={cat} key={cat} />
+						))}
 					</ul>
 				);
 			}
@@ -82,21 +107,17 @@
 			const App = () => {
 				const [counter, setCounter] = React.useState(1);
 
-				// 2. url을 그대로 작성하지않고 변수로 만들어서 넣기
 				const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
 				const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
 				const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
-				// 1. 이미지 변경하는 상태 만들기
-				const [mainCat, setMainCat] = React.useState(CAT1); // useState(초기값) << 이미지 초기값을 넣어주자
+				const [mainCat, setMainCat] = React.useState(CAT1);
 
 				function handleFormSubmit(event) {
 					event.preventDefault();
 					setCounter(counter + 1);
-					// 4. handleFormSubmit 할때 src의 상태를 CAT2로 변경한다
 					setMainCat(CAT2);
 				}
 
-				// 3. src에 스테틱한 이미지가 아니고 mainCat이라는 동적인 상태를 넘겨준다
 				return (
 					<div>
 						<Title>{counter}번째 고양이 가라사대</Title>
@@ -113,17 +134,3 @@
 		</script>
 	</body>
 </html>
-
-<!-- 
-	퀴즈
-	생성을 누르면 메인캣 사진을 다른 사진으로 바꾸기 (이미지를 변경)
-	
-	힌트
-	App에 counter상태만 있는데 mainCatImg 상태를 추가한다
-	메인캣 이미지를 지금은 정적으로 되어있는데 이 이미지가 상태를 바라보도록 하고, 생성을 눌렀을때 상태를 cat2로 변경한다.
-
-	풀이
-	생성을 눌렀을때 이미지를 바꿔라
-	1. 생성을 눌렀을때 함수 안에서 고양이 사진을 바꾼다. >> handleFormSubmit
-	2. 바꾸기 위해서 메인캣이라는 상태를 추가한다. >> 상태 만들기
--->
