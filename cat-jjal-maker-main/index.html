@@ -85,7 +85,8 @@
 				return <h1>{props.children}</h1>;
 			};
 
-			const Form = ({ handleFormSubmit }) => {
+			// 6. handleFormSubmit을 props로 받아왔는데 5번에서 작성
+			const Form = () => {
 				const [value, setValue] = React.useState("");
 				// 3. 에러 상태 추가
 				const [errorMessage, setErrorMessage] = React.useState("");
@@ -94,17 +95,24 @@
 				const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
 
 				function handleInputChange(e) {
-					const userValue = e.target.value.toUpperCase();
-					// 2. 한글인지 아닌지 ture, false를 console로 찍어보기
-					console.log(includesHangul(userValue));
+					const userValue = e.target.value;
+					setErrorMessage("");
 
 					// 4. 에러상태일때 어떻게 할지 작성
 					if (includesHangul(userValue)) {
 						setErrorMessage("한글은 입력할 수 없습니다.");
-					} else {
-						setErrorMessage("");
 					}
-					setValue(userValue.toUpperCase);
+					setValue(userValue.toUpperCase());
+				}
+
+				// 5. 또 다른 에러메세지 작성
+				function handleFormSubmit(e) {
+					e.preventDefault();
+					setErrorMessage("");
+
+					if (value === "") {
+						setErrorMessage("빈 값으로 만들 수 없습니다.");
+					}
 				}
 
 				return (
