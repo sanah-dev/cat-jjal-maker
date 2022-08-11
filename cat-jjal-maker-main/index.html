@@ -5,8 +5,14 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>고양이 가라사대</title>
-		<script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-		<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+		<script
+			src="https://unpkg.com/react@17/umd/react.development.js"
+			crossorigin
+		></script>
+		<script
+			src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+			crossorigin
+		></script>
 		<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 	</head>
 	<style>
@@ -32,20 +38,26 @@
 			/*
 
 			이번 강의에서는
-			리액트에서 폼을 좀 더 자유자재로 다루는 방법
-			>> input에서 영어 소문자를 입력했을 때 소문자가 아니라 대문자로 보여지는 기능을 만든다.
+			사용자들이 폼을 쓸 때 나올 수 있는 에러케이스에 대해서 개발해보자
+			폼검증, 폼델리베이션 이라고 한다.
 
-			화면에서 값을 동적으로 관리해야할 때는? 상태를 사용한다.
-			>> 인풋 값에 대한 상태를 추가하고 인풋에 값을 입력할 때 마다 값을 조작한다음 상태를 바꿔준다.
+			1. 한글 입력시 >> 한글은 입력할 수 없습니다.
+			2. 빈값을 입력시 >> 빈 값은 입력할 수 없습니다.
 
-			1. Form 컴포넌트에서 상태를 추가한다
+
+			1-1. 한글인지 아닌지 검사한다.
+			1-2. 만약 한글이 아니라면
 
 			*/
 
 			function CatItem(props) {
 				return (
 					<li>
-						<img src={props.img} title={props.title} style={{ width: "150px" }} />
+						<img
+							src={props.img}
+							title={props.title}
+							style={{ width: "150px" }}
+						/>
 					</li>
 				);
 			}
@@ -74,32 +86,49 @@
 			};
 
 			const Form = ({ handleFormSubmit }) => {
-				// 1. Form 컴포넌트에서 상태를 추가한다
-				const [value, setValue] = React.useState(" ");
+				const [value, setValue] = React.useState("");
+				// 3. 에러 상태 추가
+				const [errorMessage, setErrorMessage] = React.useState("");
 
-				// 3. change 이벤트 만들기
+				// 1. 한글을 검사하는 함수 추가 (한글 = true)
+				const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
+
 				function handleInputChange(e) {
-					// console로 입력한 값 찾기 >> target.value
-					// console.log(e);
-					// 4. 대문자로 변경하는 JSapi .toUpperCase()
-					// setValue 사용하는 방법 >> input에 value값을 value로 넣으면 됨
-					setValue(e.target.value.toUpperCase());
+					const userValue = e.target.value.toUpperCase();
+					// 2. 한글인지 아닌지 ture, false를 console로 찍어보기
+					console.log(includesHangul(userValue));
+
+					// 4. 에러상태일때 어떻게 할지 작성
+					if (includesHangul(userValue)) {
+						setErrorMessage("한글은 입력할 수 없습니다.");
+					} else {
+						setErrorMessage("");
+					}
+					setValue(userValue.toUpperCase);
 				}
 
-				// 2. input에 값을 입력할 때 마다 입력값이 잘 들어오는지 onChange로 확인
-				// 5. value를 입력한다.(응용: 영문만 입력해주세요, 욕을 입력하지마세요 등에 사용할 수 있다)
 				return (
 					<form onSubmit={handleFormSubmit}>
-						<input type="text" name="name" placeholder="영어 대사를 입력해주세요" onChange={handleInputChange} value={value} />
+						<input
+							type="text"
+							name="name"
+							placeholder="영어 대사를 입력해주세요"
+							value={value}
+							onChange={handleInputChange}
+						/>
 						<button type="submit">생성</button>
+						<p style={{ color: "red" }}>{errorMessage}</p>
 					</form>
 				);
 			};
 
 			const App = () => {
-				const CAT1 = "https://cataas.com/cat/60b73094e04e18001194a309/says/react";
-				const CAT2 = "https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
-				const CAT3 = "https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
+				const CAT1 =
+					"https://cataas.com/cat/60b73094e04e18001194a309/says/react";
+				const CAT2 =
+					"https://cataas.com//cat/5e9970351b7a400011744233/says/inflearn";
+				const CAT3 =
+					"https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
 
 				const [counter, setCounter] = React.useState(1);
 				const [mainCat, setMainCat] = React.useState(CAT1);
