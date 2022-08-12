@@ -38,10 +38,16 @@
 			/*
 
 			이번 강의에서는
-			사용자들이 폼을 쓸 때 나올 수 있는 에러케이스에 대해서 개발해보자
-			폼검증, 폼델리베이션 이라고 한다.
+			데이터를 유지 할 수 있게 로컬스토리지에 저장해보자
 
-			이어서 코드를 정리해보자
+			n번째 고양이 가라사대의 n번째를 페이지를 새로고침해도 데이터가 유지된다.
+			크톰개발자도구 -> Application -> Local Storage
+
+			크롬콘솔에서 작성하면 확인이 가능하다.
+			localStorage.setItem("name","산아") // storage.setItem(keyName, keyValue)
+
+			1. N번째 고양이의 N번쨰
+			2. 하트버튼의 누름 유무
 
 			*/
 			function CatItem(props) {
@@ -79,16 +85,12 @@
 				return <h1>{props.children}</h1>;
 			};
 
-			// 1-5. updateMainCat prop으로 넘겨주기
 			const Form = ({ updateMainCat }) => {
 				const [value, setValue] = React.useState("");
-				// 에러 상태 추가
 				const [errorMessage, setErrorMessage] = React.useState("");
 
-				// 한글 검사하는 함수
 				const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
 
-				// 한글 에러 출력
 				function handleInputChange(e) {
 					const userValue = e.target.value;
 					setErrorMessage("");
@@ -99,18 +101,14 @@
 					setValue(userValue.toUpperCase());
 				}
 
-				// 빈 값 에러 출때
 				function handleFormSubmit(e) {
 					e.preventDefault();
 					setErrorMessage("");
 
 					if (value === "") {
 						setErrorMessage("빈 값으로 만들 수 없습니다.");
-						// 1-5. handleFormSubmit 함수가 에러메세지를 보여준 뒤 아래 updateMainCat까지 해주지 않기 위하여 return
 						return;
 					}
-					// 1-3. 그래서 여기에 추가! (updateMainCat을 불러주는 곳은 Form 컴포넌트에서 porp으로 받은 다음, Form에서 밸리데이션을 통과 한 다음 불러온다.)
-					// 기능이 잘 돌아가기 위해서 상위컴포넌트에서 원하는 액션을 부를 수 있어야 한다.
 					updateMainCat();
 				}
 
@@ -137,16 +135,32 @@
 				const CAT3 =
 					"https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
 
-				const [counter, setCounter] = React.useState(1);
+				// 1-2. UI에서도 스토리지에 저장된 카운터를 사용하자
+				// const [counter, setCounter] = React.useState(1);
+
+				// 1-3. 로컬스토리지에서 밸류를 저장할때 무조건 string으로 저장하기 때문에 1,2,3,4로 읽히지않고 1234로 붙혀서 읽힌다.
+				// const [counter, setCounter] = React.useState(localStorage.getItem('counter'));
+
+				// 1-4. string값이 아니라 number값으로 가져오기
+				const [counter, setCounter] = React.useState(
+					Number(localStorage.getItem("counter"))
+				);
+
 				const [mainCat, setMainCat] = React.useState(CAT1);
 				const [favorites, setFavorites] = React.useState([CAT1, CAT2]);
 
-				// 1-2. 함수의 행동을 봤을때 업데이트 되는 함수이기 때문에 함수명 변경
 				function updateMainCat() {
-					// 1-1. 중복된 코드 제거
-					// event.preventDefault();
 					setMainCat(CAT2);
-					setCounter(counter + 1);
+
+					// 1. 카운터를 업데이트 하는 곳 setCounter
+					// setCounter(counter + 1);
+
+					// 1-1. 업데이트 후 로컬스토리지를 저장하기
+					// 셋카운터+1 이 계속 사용되니까 변수로 담아서 사용해보자
+					const nextCounter = counter + 1;
+					setCounter(nextCounter);
+
+					localStorage.setItem("counter", nextCounter);
 				}
 
 				function handleHeartClick() {
@@ -156,13 +170,7 @@
 				return (
 					<div>
 						<Title>{counter}번째 고양이 가라사대</Title>
-						{/*  1. App 안과 바깥에 동일한 함수가 있고, 바깥에 작성된 handleFormSubmit은 만들었지만 선언하지 않았기 때문에 수정해보자! */}
-						{/*  1-4. 변경한 함수로 변경
-						<Form handleFormSubmit={handleFormSubmit} /> */}
-						{/* 1-3. updateMainCat을 불러주는 곳은 Form 컴포넌트에서 porp으로 받은 다음, Form에서 밸리데이션을 통과 한 다음 불러온다. */}
 						<Form updateMainCat={updateMainCat} />{" "}
-						{/*  2. 리액트 이벤트 핸들러를 작성할때 쓰는 컨벤션 => 함수명은 핸들로 시작을 하고, 이 함수를 prop으로 넘길때는 on으로 한다.
-						<MainCard src={mainCat} handleHeartClick={handleHeartClick} /> */}
 						<MainCard src={mainCat} onHeartClick={handleHeartClick} />
 						<Favorites favorites={favorites} />
 					</div>
