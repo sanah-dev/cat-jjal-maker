@@ -188,7 +188,10 @@
 					// setFavorites([...favorites, CAT3]);
 
 					// 2-3. 변수로 만들어서 변수를 사용하기
-					const nextFavorites = [...favorites, CAT3];
+					// const nextFavorites = [...favorites, CAT3];
+					// 3-1. 하트를 누른 고양이 저장하기
+					const nextFavorites = [...favorites, mainCat];
+
 					setFavorites(nextFavorites);
 
 					// 2-4. 로컬스토리지에 저장하기
@@ -201,6 +204,7 @@
 						<Form updateMainCat={updateMainCat} />{" "}
 						<MainCard src={mainCat} onHeartClick={handleHeartClick} />
 						<Favorites favorites={favorites} />
+						{/* 3. 하트를 눌렀을때 무조건 CAT3가 추가되게 했기 때문에 mainCat으로 변경해야한다.*/}
 					</div>
 				);
 			};
