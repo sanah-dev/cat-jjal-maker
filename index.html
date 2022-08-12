@@ -36,22 +36,36 @@
 		<div id="app"></div>
 		<script type="text/babel">
 			/*
+			
+			API https://github.com/public-apis/public-apis
 
-			이번 강의에서는
-			데이터를 유지 할 수 있게 로컬스토리지에 저장해보자
+			우리가 사용할 API는 cataas -> https://cataas.com/
+			- /cat 을 사용할 거고,
+			- /cat을 json으로 받아올 떄는 /cat?json=true 으로 작성하라고 Advanced에 나와있음
 
-			n번째 고양이 가라사대의 n번째를 페이지를 새로고침해도 데이터가 유지된다.
-			크톰개발자도구 -> Application -> Local Storage
+			
+			우리가 사용할 자바스크립트 API -> fetch()
+			- MDC fetch() -> https://developer.mozilla.org/ko/docs/Web/API/Fetch_API/Using_Fetch
+				fetch만 사용하는게 아니라 .then 으로 response를 json으로 바꿔주고, 사용할 수 있음
 
-			크롬콘솔에서 작성하면 확인이 가능하다.
-			localStorage.setItem("name","산아") // storage.setItem(keyName, keyValue)
+			fetch 문법을 제대로 알기 위해서는 위하여 비동기와 promise를 이해해야 좋음
+					비동기: https://joshua1988.github.io/web-development/javascript/javascript-asynchronous-operation/
+					Promise: https://joshua1988.github.io/web-development/javascript/promise-for-beginners/
+				
 
-			1. N번째 고양이의 N번쨰
-			2. 하트버튼의 누름 유무
+			크롬 콘솔에 작성
+				fetch('https://cataas.com/cat?json=true')
+				.then((response) => response.json())
+				.then((data) => console.log(data));
+
+
+
+			1. 현재는 CAT1, CAT2, CAT3과 같이 글씨가 작성된 고양이 사진이 나오는데 API를 이용해서 입력한 글씨가 작성되게 만들어보자
+
 
 			*/
 
-			// 2. utils.js 가져오기
+			// 로컬 스토리지 저장시 json 파싱
 			const jsonLocalStorage = {
 				setItem: (key, value) => {
 					localStorage.setItem(key, JSON.stringify(value));
@@ -61,6 +75,17 @@
 				},
 			};
 
+			// 1. 고양이 이미지를 API로 불러와서 이미지로 리턴
+			const fetchCat = async (text) => {
+				const OPEN_API_DOMAIN = "https://cataas.com";
+				const response = await fetch(
+					`${OPEN_API_DOMAIN}/cat/says/${text}?json=true`
+				);
+				const responseJson = await response.json();
+				return `${OPEN_API_DOMAIN}/${responseJson.url}`;
+			};
+
+			/* Components */
 			function CatItem(props) {
 				return (
 					<li>
@@ -97,7 +122,7 @@
 			};
 
 			const Form = ({ updateMainCat }) => {
-				const [value, setValue] = React.useState("");
+				const [value, setValue] = React.useState(""); // 1-5. Input에 입력한 값이 useState로 관리되고 있기 때문에 useState의 value를 updateMainCat에 인자를 넘겨준다.
 				const [errorMessage, setErrorMessage] = React.useState("");
 
 				const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
@@ -120,7 +145,8 @@
 						setErrorMessage("빈 값으로 만들 수 없습니다.");
 						return;
 					}
-					updateMainCat();
+					// 1-6. 작성된 텍스를 인자로 함수에 넘겨준다.
+					updateMainCat(value);
 				}
 
 				return (
@@ -146,55 +172,41 @@
 				const CAT3 =
 					"https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
 
-				// 1-2. UI에서도 스토리지에 저장된 카운터를 사용하자
-				// const [counter, setCounter] = React.useState(1);
-
-				// 1-3. 로컬스토리지에서 밸류를 저장할때 무조건 string으로 저장하기 때문에 1,2,3,4로 읽히지않고 1234로 붙혀서 읽힌다.
-				// const [counter, setCounter] = React.useState(localStorage.getItem('counter'));
-
-				// 1-4. string값이 아니라 number값으로 가져오기
 				const [counter, setCounter] = React.useState(
 					Number(jsonLocalStorage.getItem("counter"))
 				);
 
 				const [mainCat, setMainCat] = React.useState(CAT1);
 
-				// 2-5. nextFavorites로 수정하기
 				const [favorites, setFavorites] = React.useState(
-					// jsonLocalStorage.getItem("favorites")
-					// 2-6. 이때 에러가 발생하는데, 에러내용은 map에서 배열을 만들때 favorites 값이 없기 때문에 배열을 만들수가 없다고 한다.
-					// 2-7. 초기값을 스토리지에서 가져오는데 없을때 이 초기값을 빈 배열로 한다고 하면 된다.
 					jsonLocalStorage.getItem("favorites") || []
-					// 2-8. A || B 는 A가 없으면 B를 써라 -> favorites이 없으면 빈배열로 해라
 				);
 
-				function updateMainCat() {
-					setMainCat(CAT2);
+				// 1-1. 생성 버튼을 누르면 변경되기 때문에 여기서 작성
+				// function updateMainCat() {
 
-					// 1. 카운터를 업데이트 하는 곳 setCounter
-					// setCounter(counter + 1);
+				// 1-3. await의 상위에는 꼭 async로 해줘야한다. async&await 강의참고
+				// async function updateMainCat() {
 
-					// 1-1. 업데이트 후 로컬스토리지를 저장하기
-					// 셋카운터+1 이 계속 사용되니까 변수로 담아서 사용해보자
+				// 1-7. 넘겨준 인자를 받는다
+				async function updateMainCat(value) {
+					// 1-2. await로 만들어진 함수이기 때문에 await로 받아와야하고
+					const newCat = await fetchCat(value);
+
+					// 1-4. CAT2로 되어있는 이미지를 newCat으로 변경하면 완료! 이제 1-2에서 text로 하드코딩 된 부분만 value를 변경해주면 끝!
+					// setMainCat(CAT2);
+					setMainCat(newCat);
+
 					const nextCounter = counter + 1;
 					setCounter(nextCounter);
 
 					localStorage.setItem("counter", nextCounter);
 				}
 
-				// 2-1. handleHeartClick을 했을 때 로컬스토리지에 setItem으로 favorites를 저장한다.
 				function handleHeartClick() {
-					// 2-2. 위에서 했던 counter와 동일하게 수정해보기
-					// setFavorites([...favorites, CAT3]);
-
-					// 2-3. 변수로 만들어서 변수를 사용하기
-					// const nextFavorites = [...favorites, CAT3];
-					// 3-1. 하트를 누른 고양이 저장하기
 					const nextFavorites = [...favorites, mainCat];
-
 					setFavorites(nextFavorites);
 
-					// 2-4. 로컬스토리지에 저장하기
 					jsonLocalStorage.setItem("favorites", nextFavorites);
 				}
 
@@ -204,7 +216,6 @@
 						<Form updateMainCat={updateMainCat} />{" "}
 						<MainCard src={mainCat} onHeartClick={handleHeartClick} />
 						<Favorites favorites={favorites} />
-						{/* 3. 하트를 눌렀을때 무조건 CAT3가 추가되게 했기 때문에 mainCat으로 변경해야한다.*/}
 					</div>
 				);
 			};

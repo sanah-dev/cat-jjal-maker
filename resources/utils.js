@@ -19,6 +19,10 @@ const jsonLocalStorage = {
 	},
 };
 
+// 텍스트를 인자로 받아서 텍스트에 맞는 고양이 이미지를 반환하는 함수
+// then 대신에 async, await를 사용했고 관련하여
+// async await 문법 글: https://joshua1988.github.io/web-development/javascript/js-async-await/
+// async await 무료 강의: https://www.inflearn.com/course/vue-js/unit/17061
 const fetchCat = async (text) => {
 	const OPEN_API_DOMAIN = "https://cataas.com";
 	const response = await fetch(`${OPEN_API_DOMAIN}/cat/says/${text}?json=true`);
