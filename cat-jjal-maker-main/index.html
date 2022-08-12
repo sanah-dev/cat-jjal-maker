@@ -50,6 +50,17 @@
 			2. 하트버튼의 누름 유무
 
 			*/
+
+			// 2. utils.js 가져오기
+			const jsonLocalStorage = {
+				setItem: (key, value) => {
+					localStorage.setItem(key, JSON.stringify(value));
+				},
+				getItem: (key) => {
+					return JSON.parse(localStorage.getItem(key));
+				},
+			};
+
 			function CatItem(props) {
 				return (
 					<li>
@@ -143,11 +154,19 @@
 
 				// 1-4. string값이 아니라 number값으로 가져오기
 				const [counter, setCounter] = React.useState(
-					Number(localStorage.getItem("counter"))
+					Number(jsonLocalStorage.getItem("counter"))
 				);
 
 				const [mainCat, setMainCat] = React.useState(CAT1);
-				const [favorites, setFavorites] = React.useState([CAT1, CAT2]);
+
+				// 2-5. nextFavorites로 수정하기
+				const [favorites, setFavorites] = React.useState(
+					// jsonLocalStorage.getItem("favorites")
+					// 2-6. 이때 에러가 발생하는데, 에러내용은 map에서 배열을 만들때 favorites 값이 없기 때문에 배열을 만들수가 없다고 한다.
+					// 2-7. 초기값을 스토리지에서 가져오는데 없을때 이 초기값을 빈 배열로 한다고 하면 된다.
+					jsonLocalStorage.getItem("favorites") || []
+					// 2-8. A || B 는 A가 없으면 B를 써라 -> favorites이 없으면 빈배열로 해라
+				);
 
 				function updateMainCat() {
 					setMainCat(CAT2);
@@ -163,8 +182,17 @@
 					localStorage.setItem("counter", nextCounter);
 				}
 
+				// 2-1. handleHeartClick을 했을 때 로컬스토리지에 setItem으로 favorites를 저장한다.
 				function handleHeartClick() {
-					setFavorites([...favorites, CAT3]);
+					// 2-2. 위에서 했던 counter와 동일하게 수정해보기
+					// setFavorites([...favorites, CAT3]);
+
+					// 2-3. 변수로 만들어서 변수를 사용하기
+					const nextFavorites = [...favorites, CAT3];
+					setFavorites(nextFavorites);
+
+					// 2-4. 로컬스토리지에 저장하기
+					jsonLocalStorage.setItem("favorites", nextFavorites);
 				}
 
 				return (
