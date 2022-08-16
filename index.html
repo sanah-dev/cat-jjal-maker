@@ -36,15 +36,21 @@
 		<div id="app"></div>
 		<script type="text/babel">
 			/*
-			
-			조건부 렌더링 
-			
+
+			조건부 렌더링
+
 			- 기능 추가하기
-			
+
 				1. 만약 즐겨찾기를 누른 이미지가 없다면, 텍스트를 출력 "사진 위 하트를 눌러 고양이 사진을 저장해보세요!"
 				2. 하트를 눌렀을때 > 내가 하트를 누른 상태면 빨간하트, 아니면 하얀하트를 보여줘라
 
+			- 퀴즈
+				3. 초기값을 제대로 넣어주지 않았기 때문에 "0번째 고양이 가라사대"라고 보인다.
+					 n번쨰를 삭제하고 고양이 가라사대만 보이게 한다.
 
+					 힌트: 만약 counter가 없으면, 고양이 가라사대만 보이게 해라
+
+				4. 퀴즈풀이
 			*/
 
 			// 로컬 스토리지 저장시 json 파싱
@@ -165,7 +171,9 @@
 					"https://cataas.com/cat/595f280b557291a9750ebf65/says/JavaScript";
 
 				const [counter, setCounter] = React.useState(
-					Number(jsonLocalStorage.getItem("counter"))
+					// 4. Number가 있어서 null이 아니라 0으로 출력됐었음 null로 출력되는게 맞음
+					// Number(jsonLocalStorage.getItem("counter"))
+					jsonLocalStorage.getItem("counter")
 				);
 
 				const [mainCat, setMainCat] = React.useState(CAT1);
@@ -178,6 +186,9 @@
 				// ex. [1, 2, 3].includes(1) > true
 				// ex. [1, 2, 3].includes(4) > false
 				const alreadyFavorite = favorites.includes(mainCat);
+
+				// 3-1. 혼자 퀴즈 풀어보기 | 카운터가 0이면 "", 있으면 n번째
+				const initCounter = counter === 0 ? "" : `${counter}번째`;
 
 				async function setIniticalCat() {
 					const newCat = await fetchCat("First Cat");
@@ -207,9 +218,18 @@
 					jsonLocalStorage.setItem("favorites", nextFavorites);
 				}
 
+				// 4-1. 퀴즈풀이
+				const counterTitle = counter === null ? "" : counter + "번째";
+
 				return (
 					<div>
-						<Title>{counter}번째 고양이 가라사대</Title>
+						{/* <Title>{counter}번째 고양이 가라사대</Title> */}
+						{/* 3-2. 변경	*/}
+						<Title>{initCounter} 고양이 가라사대</Title>
+
+						{/* 4-1. 변경 */}
+						<Title>{counterTitle} 고양이 가라사대</Title>
+
 						<Form updateMainCat={updateMainCat} />
 
 						{/* 1-3. alreadyFavorite을 사용해야하는 곳이 mainCard 속의 하트이기 때문에 prop으로 넘겨준다. */}
