@@ -37,39 +37,12 @@
 		<script type="text/babel">
 			/*
 			
-			API https://github.com/public-apis/public-apis
-
-			우리가 사용할 API는 cataas -> https://cataas.com/
-			- /cat 을 사용할 거고,
-			- /cat을 json으로 받아올 떄는 /cat?json=true 으로 작성하라고 Advanced에 나와있음
-
+			조건부 렌더링 
 			
-			우리가 사용할 자바스크립트 API -> fetch()
-			- MDC fetch() -> https://developer.mozilla.org/ko/docs/Web/API/Fetch_API/Using_Fetch
-				fetch만 사용하는게 아니라 .then 으로 response를 json으로 바꿔주고, 사용할 수 있음
-
-			fetch 문법을 제대로 알기 위해서는 위하여 비동기와 promise를 이해해야 좋음
-					비동기: https://joshua1988.github.io/web-development/javascript/javascript-asynchronous-operation/
-					Promise: https://joshua1988.github.io/web-development/javascript/promise-for-beginners/
-				
-
-			크롬 콘솔에 작성
-				fetch('https://cataas.com/cat?json=true')
-				.then((response) => response.json())
-				.then((data) => console.log(data));
-
-
-
-			1. 현재는 CAT1, CAT2, CAT3과 같이 글씨가 작성된 고양이 사진이 나오는데 API를 이용해서 입력한 글씨가 작성되게 만들어보자
-			2. 기능추가 - 사이트 진입시 API 호출을하여 컴포넌트 생성
-				 >> 사이트 처음 들어왔을때, 초기 이미지를 서버에서 불러온 이미지를 mainCat으로 만들기
-
-
-			useEffect
-				리액트의 컴포넌트가 렌더링 될때마다 특정 작업을 실행할수있게하는 Hook
-				내가 원하는 시점에서 함수를 호출하고싶을때 사용한다.
-
+			- 기능 추가하기
 			
+				1. 만약 즐겨찾기를 누른 이미지가 없다면, 텍스트를 출력 "사진 위 하트를 눌러 고양이 사진을 저장해보세요!"
+				2. 하트를 눌렀을때 > 내가 하트를 누른 상태면 빨간하트, 아니면 하얀하트를 보여줘라
 
 
 			*/
@@ -84,7 +57,6 @@
 				},
 			};
 
-			// 1. 고양이 이미지를 API로 불러와서 이미지로 리턴
 			const fetchCat = async (text) => {
 				const OPEN_API_DOMAIN = "https://cataas.com";
 				const response = await fetch(
@@ -107,7 +79,13 @@
 				);
 			}
 
+			// 1. 좋아요 고양이를 다루는 컴포넌트안에서 작성한다.
 			function Favorites({ favorites }) {
+				// 1-1. 고양이 데이터가 없으면 @@해라
+				if (favorites.length === 0) {
+					return <div>사진 위 하트를 눌러 고양이 사진을 저장해보세요!</div>;
+				}
+
 				return (
 					<ul className="favorites">
 						{favorites.map((cat, id) => (
@@ -117,11 +95,17 @@
 				);
 			}
 
-			const MainCard = ({ src, onHeartClick }) => {
+			// 1-4. prop으로 alreadyFavorit를 보냈으니까 받아준다
+			const MainCard = ({ src, onHeartClick, alreadyFavorite }) => {
+				// 1-5. 하트에 대한 조건부 렌더링을 삼항연산자로 작성해보자
+				const heartIcon = alreadyFavorite ? "💖" : "🤍"; // 만약 alreadyFavorite이면 💖, 그렇지 않으면 🤍
+
 				return (
 					<div className="main-card">
 						<img src={src} />
-						<button onClick={onHeartClick}>🤍</button>
+						{/* 1-6. heartIcon 넣어주기 */}
+						{/* <button onClick={onHeartClick}>🤍</button> */}
+						<button onClick={onHeartClick}>{heartIcon}</button>
 					</div>
 				);
 			};
@@ -131,7 +115,7 @@
 			};
 
 			const Form = ({ updateMainCat }) => {
-				const [value, setValue] = React.useState(""); // 1-5. Input에 입력한 값이 useState로 관리되고 있기 때문에 useState의 value를 updateMainCat에 인자를 넘겨준다.
+				const [value, setValue] = React.useState("");
 				const [errorMessage, setErrorMessage] = React.useState("");
 
 				const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
@@ -154,7 +138,6 @@
 						setErrorMessage("빈 값으로 만들 수 없습니다.");
 						return;
 					}
-					// 1-6. 작성된 텍스를 인자로 함수에 넘겨준다.
 					updateMainCat(value);
 				}
 
@@ -191,42 +174,24 @@
 					jsonLocalStorage.getItem("favorites") || []
 				);
 
-				/* 2. 기본 코드는 1번에서 작성한것을 가져와서 사용한다!
-					const newCat = await fetchCat(value);
-					setMainCat(newCat);
-				*/
+				// 1-2. favorites에 mainCat이 있냐 => 좋아요 목록에 mainCat이 있냐
+				// ex. [1, 2, 3].includes(1) > true
+				// ex. [1, 2, 3].includes(4) > false
+				const alreadyFavorite = favorites.includes(mainCat);
+
 				async function setIniticalCat() {
 					const newCat = await fetchCat("First Cat");
 					console.log(newCat);
 					setMainCat(newCat);
 				}
 
-				// 2-2. 함수를 만들고 바깥에서 호출
-				// setIniticalCat();
-				// 2-3. 무한대로 계속 호출한다. 왜? -> App이 만들어졌을때 한번만 호출되는게 아니라 App이 UI를 그릴때마다 계속 호출되기 때문에 useEffect를 사용
 				React.useEffect(() => {
 					setIniticalCat();
-				}, []); // 빈배열일때 << 이때만 호출한다
+				}, []);
 
-				/* ↑↑↑↑ 예제
-				React.useEffect(() => {
-					console.log("헬로");
-				}, [counter]); // counter 변수가 바뀔 때 호출헤라
-				*/
-
-				// 1-1. 생성 버튼을 누르면 변경되기 때문에 여기서 작성
-				// function updateMainCat() {
-
-				// 1-3. await의 상위에는 꼭 async로 해줘야한다. async&await 강의참고
-				// async function updateMainCat() {
-
-				// 1-7. 넘겨준 인자를 받는다
 				async function updateMainCat(value) {
-					// 1-2. await로 만들어진 함수이기 때문에 await로 받아와야하고
 					const newCat = await fetchCat(value);
 
-					// 1-4. CAT2로 되어있는 이미지를 newCat으로 변경하면 완료! 이제 1-2에서 text로 하드코딩 된 부분만 value를 변경해주면 끝!
-					// setMainCat(CAT2);
 					setMainCat(newCat);
 
 					const nextCounter = counter + 1;
@@ -245,8 +210,14 @@
 				return (
 					<div>
 						<Title>{counter}번째 고양이 가라사대</Title>
-						<Form updateMainCat={updateMainCat} />{" "}
-						<MainCard src={mainCat} onHeartClick={handleHeartClick} />
+						<Form updateMainCat={updateMainCat} />
+
+						{/* 1-3. alreadyFavorite을 사용해야하는 곳이 mainCard 속의 하트이기 때문에 prop으로 넘겨준다. */}
+						<MainCard
+							src={mainCat}
+							onHeartClick={handleHeartClick}
+							alreadyFavorite={alreadyFavorite}
+						/>
 						<Favorites favorites={favorites} />
 					</div>
 				);
