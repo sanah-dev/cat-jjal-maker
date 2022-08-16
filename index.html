@@ -61,6 +61,15 @@
 
 
 			1. 현재는 CAT1, CAT2, CAT3과 같이 글씨가 작성된 고양이 사진이 나오는데 API를 이용해서 입력한 글씨가 작성되게 만들어보자
+			2. 기능추가 - 사이트 진입시 API 호출을하여 컴포넌트 생성
+				 >> 사이트 처음 들어왔을때, 초기 이미지를 서버에서 불러온 이미지를 mainCat으로 만들기
+
+
+			useEffect
+				리액트의 컴포넌트가 렌더링 될때마다 특정 작업을 실행할수있게하는 Hook
+				내가 원하는 시점에서 함수를 호출하고싶을때 사용한다.
+
+			
 
 
 			*/
@@ -101,8 +110,8 @@
 			function Favorites({ favorites }) {
 				return (
 					<ul className="favorites">
-						{favorites.map((cat) => (
-							<CatItem img={cat} key={cat} />
+						{favorites.map((cat, id) => (
+							<CatItem img={cat} key={id} />
 						))}
 					</ul>
 				);
@@ -181,6 +190,29 @@
 				const [favorites, setFavorites] = React.useState(
 					jsonLocalStorage.getItem("favorites") || []
 				);
+
+				/* 2. 기본 코드는 1번에서 작성한것을 가져와서 사용한다!
+					const newCat = await fetchCat(value);
+					setMainCat(newCat);
+				*/
+				async function setIniticalCat() {
+					const newCat = await fetchCat("First Cat");
+					console.log(newCat);
+					setMainCat(newCat);
+				}
+
+				// 2-2. 함수를 만들고 바깥에서 호출
+				// setIniticalCat();
+				// 2-3. 무한대로 계속 호출한다. 왜? -> App이 만들어졌을때 한번만 호출되는게 아니라 App이 UI를 그릴때마다 계속 호출되기 때문에 useEffect를 사용
+				React.useEffect(() => {
+					setIniticalCat();
+				}, []); // 빈배열일때 << 이때만 호출한다
+
+				/* ↑↑↑↑ 예제
+				React.useEffect(() => {
+					console.log("헬로");
+				}, [counter]); // counter 변수가 바뀔 때 호출헤라
+				*/
 
 				// 1-1. 생성 버튼을 누르면 변경되기 때문에 여기서 작성
 				// function updateMainCat() {
